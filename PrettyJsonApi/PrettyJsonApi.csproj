@@ -10,6 +10,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore" Version="1.2.0-preview1-23379" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="1.2.0-preview1-23379" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="1.2.0-preview1-23379" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.2.0-preview1-23379" />
   </ItemGroup>
 
