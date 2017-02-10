@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace PrettyJsonApi
 {
@@ -22,9 +23,11 @@ namespace PrettyJsonApi
         {
             var auth = context.User;
 
-            if (auth == null || !auth.Identity.IsAuthenticated)
+            if (auth == null || !auth.Identity.IsAuthenticated && 
+                context.Request.GetDisplayUrl().Contains("pretty"))
             {
                 context.Response.StatusCode = 401;
+                await context.Response.WriteAsync("Oops - badness!");
                 return;
             }
 

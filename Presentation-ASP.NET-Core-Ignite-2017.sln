@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26206.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrettyJsonApi", "PrettyJsonApi\PrettyJsonApi.csproj", "{1D77AB03-06CE-41D5-9359-420857028D70}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{4A5B30D2-0854-4693-89EC-54A48CCA5337}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{1D77AB03-06CE-41D5-9359-420857028D70}.Release|x64.Build.0 = Release|x64
 		{1D77AB03-06CE-41D5-9359-420857028D70}.Release|x86.ActiveCfg = Release|x86
 		{1D77AB03-06CE-41D5-9359-420857028D70}.Release|x86.Build.0 = Release|x86
+		{4A5B30D2-0854-4693-89EC-54A48CCA5337}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A5B30D2-0854-4693-89EC-54A48CCA5337}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A5B30D2-0854-4693-89EC-54A48CCA5337}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4A5B30D2-0854-4693-89EC-54A48CCA5337}.Debug|x64.Build.0 = Debug|Any CPU
+		{4A5B30D2-0854-4693-89EC-54A48CCA5337}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4A5B30D2-0854-4693-89EC-54A48CCA5337}.Debug|x86.Build.0 = Debug|Any CPU
+		{4A5B30D2-0854-4693-89EC-54A48CCA5337}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A5B30D2-0854-4693-89EC-54A48CCA5337}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A5B30D2-0854-4693-89EC-54A48CCA5337}.Release|x64.ActiveCfg = Release|Any CPU
+		{4A5B30D2-0854-4693-89EC-54A48CCA5337}.Release|x64.Build.0 = Release|Any CPU
+		{4A5B30D2-0854-4693-89EC-54A48CCA5337}.Release|x86.ActiveCfg = Release|Any CPU
+		{4A5B30D2-0854-4693-89EC-54A48CCA5337}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

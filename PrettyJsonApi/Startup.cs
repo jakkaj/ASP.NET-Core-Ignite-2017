@@ -40,6 +40,7 @@ namespace PrettyJsonApi
         {
             services.Configure<SigningSettings>(Configuration.GetSection("SigningSettings"));
             services.AddRouting();
+            services.AddSingleton<JwtCreator>();
         }
 
         async Task AuthenticationFailed(AuthenticationFailedContext context)
@@ -49,7 +50,7 @@ namespace PrettyJsonApi
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, 
-            IOptions<SigningSettings> signingSettings)
+            IOptions<SigningSettings> signingSettings, JwtCreator jwtCreator)
         {
             loggerFactory.AddConsole();
 
@@ -59,11 +60,8 @@ namespace PrettyJsonApi
             }
 
             app.UseStaticFiles();
-            RSACryptoServiceProvider publicAndPrivate = new RSACryptoServiceProvider();
-            publicAndPrivate.FromBase64String(signingSettings.Value.RSAPublic);
-
-           
-            var key = new RsaSecurityKey(publicAndPrivate);
+            
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingSettings.Value.Key));
 
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -93,9 +91,7 @@ namespace PrettyJsonApi
                 TokenValidationParameters = tokenValidationParameters,
                 Events = new JwtBearerEvents()
                 {
-
                     OnAuthenticationFailed = AuthenticationFailed
-
                 }
 
             });
@@ -107,6 +103,11 @@ namespace PrettyJsonApi
 
             app.UseRouter(router =>
             {
+                router.MapGet("jwt", async (request, response, routeData) =>
+                {
+                    await response.WriteAsync(jwtCreator.CreateJwt());
+                });
+
                 router.MapPost("pretty/{language}", async (request, response, routeData) =>
                 {
                     using (var streamReader = new StreamReader(request.HttpContext.Request.Body))
