@@ -38,19 +38,13 @@ namespace PrettyJsonApi
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<SigningSettings>(Configuration.GetSection("SigningSettings"));
+            services.Configure<ApiKeySettings>(Configuration.GetSection("ApiKeySettings"));
             services.AddRouting();
-            services.AddSingleton<JwtCreator>();
-        }
-
-        async Task AuthenticationFailed(AuthenticationFailedContext context)
-        {
-          
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, 
-            IOptions<SigningSettings> signingSettings, JwtCreator jwtCreator)
+            IOptions<ApiKeySettings> signingSettings)
         {
             loggerFactory.AddConsole();
 
@@ -61,51 +55,13 @@ namespace PrettyJsonApi
 
             app.UseStaticFiles();
             
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingSettings.Value.Key));
-
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                // The signing key must match!
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = key,
-
-                // Validate the JWT Issuer (iss) claim
-                ValidateIssuer = true,
-                ValidIssuer = signingSettings.Value.TokenValidIssuer,
-
-                // Validate the JWT Audience (aud) claim
-                ValidateAudience = true,
-                ValidAudience = signingSettings.Value.TokenAllowedAudience,
-
-                // Validate the token expiry
-                ValidateLifetime = true,
-
-                // If you want to allow a certain amount of clock drift, set that here:
-                ClockSkew = TimeSpan.Zero
-            };
-
-            app.UseJwtBearerAuthentication(new JwtBearerOptions
-            {
-                AutomaticAuthenticate = true,
-                AutomaticChallenge = false,
-                TokenValidationParameters = tokenValidationParameters,
-                Events = new JwtBearerEvents()
-                {
-                    OnAuthenticationFailed = AuthenticationFailed
-                }
-
-            });
-
-            //var sKey = new RsaSecurityKey();
-            //var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
-
             app.UseMiddleware<CustomMiddleware>();
 
             app.UseRouter(router =>
             {
-                router.MapGet("jwt", async (request, response, routeData) =>
+                router.MapGet("hi", async (request, response, routeData) =>
                 {
-                    await response.WriteAsync(jwtCreator.CreateJwt());
+                    await response.WriteAsync("gday");
                 });
 
                 router.MapPost("pretty/{language}", async (request, response, routeData) =>

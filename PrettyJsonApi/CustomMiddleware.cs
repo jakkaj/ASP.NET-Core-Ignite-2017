@@ -5,26 +5,30 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.Extensions.Options;
 
 namespace PrettyJsonApi
 {
     public class CustomMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly IOptions<ApiKeySettings> _options;
 
 
-        public CustomMiddleware(RequestDelegate next)
+        public CustomMiddleware(RequestDelegate next, IOptions<ApiKeySettings> options)
         {
             _next = next;
-
+            _options = options;
         }
 
         public async Task Invoke(HttpContext context)
         {
-            var auth = context.User;
+            var keyHeader = context.Request.Headers.ContainsKey("ApiKey")
+                ? context.Request.Headers["ApiKey"].FirstOrDefault()
+                : null;
 
-            if (auth == null || !auth.Identity.IsAuthenticated && 
-                context.Request.GetDisplayUrl().Contains("pretty"))
+
+            if (keyHeader == null || _options.Value.ApiKey != keyHeader)
             {
                 context.Response.StatusCode = 401;
                 await context.Response.WriteAsync("Oops - badness!");
