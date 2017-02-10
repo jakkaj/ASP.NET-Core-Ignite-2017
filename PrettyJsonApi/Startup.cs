@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,6 +14,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace PrettyJsonApi
@@ -39,8 +42,14 @@ namespace PrettyJsonApi
             services.AddRouting();
         }
 
+        async Task AuthenticationFailed(AuthenticationFailedContext context)
+        {
+          
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, 
+            IOptions<SigningSettings> signingSettings)
         {
             loggerFactory.AddConsole();
 
@@ -50,8 +59,11 @@ namespace PrettyJsonApi
             }
 
             app.UseStaticFiles();
-            var secretKey = "sdfsdfsd";
-            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
+            RSACryptoServiceProvider publicAndPrivate = new RSACryptoServiceProvider();
+            publicAndPrivate.FromBase64String(signingSettings.Value.RSAPublic);
+
+           
+            var key = new RsaSecurityKey(publicAndPrivate);
 
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -61,11 +73,11 @@ namespace PrettyJsonApi
 
                 // Validate the JWT Issuer (iss) claim
                 ValidateIssuer = true,
-                ValidIssuer = "ExampleIssuer",
+                ValidIssuer = signingSettings.Value.TokenValidIssuer,
 
                 // Validate the JWT Audience (aud) claim
                 ValidateAudience = true,
-                ValidAudience = "ExampleAudience",
+                ValidAudience = signingSettings.Value.TokenAllowedAudience,
 
                 // Validate the token expiry
                 ValidateLifetime = true,
@@ -77,12 +89,21 @@ namespace PrettyJsonApi
             app.UseJwtBearerAuthentication(new JwtBearerOptions
             {
                 AutomaticAuthenticate = true,
-                AutomaticChallenge = true,
-                TokenValidationParameters = tokenValidationParameters
+                AutomaticChallenge = false,
+                TokenValidationParameters = tokenValidationParameters,
+                Events = new JwtBearerEvents()
+                {
+
+                    OnAuthenticationFailed = AuthenticationFailed
+
+                }
+
             });
 
             //var sKey = new RsaSecurityKey();
             //var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
+
+            app.UseMiddleware<CustomMiddleware>();
 
             app.UseRouter(router =>
             {

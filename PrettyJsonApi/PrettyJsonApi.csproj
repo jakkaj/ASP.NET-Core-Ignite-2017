@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="1.2.0-preview1-23379" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="1.2.0-preview1-23379" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.2.0-preview1-23379" />
+    <PackageReference Include="System.Xml.XmlDocument" Version="4.4.0-beta-24913-01" />
   </ItemGroup>
 
 </Project>
