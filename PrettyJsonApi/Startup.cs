@@ -40,6 +40,7 @@ namespace PrettyJsonApi
         {
             services.Configure<ApiKeySettings>(Configuration.GetSection("ApiKeySettings"));
             services.AddScoped<ISomeService, SomeService>();
+            services.AddScoped<RouteKeyShowWrapper>();
             services.AddSingleton<RouteKeyShow>();
             services.AddRouting();
         }
@@ -63,6 +64,8 @@ namespace PrettyJsonApi
 
             app.UseRouter(router =>
             {
+                router.MapGetExtended<RouteKeyShowWrapper>("keywrapped");
+
                 router.MapGet("hi", async (request, response, routeData) =>
                 {
                     await response.WriteAsync("gday");
