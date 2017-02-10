@@ -21,7 +21,7 @@ namespace PrettyJsonApi
             _options = options;
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context, ISomeService someService)
         {
             var keyHeader = context.Request.Headers.ContainsKey("ApiKey")
                 ? context.Request.Headers["ApiKey"].FirstOrDefault()
@@ -34,6 +34,8 @@ namespace PrettyJsonApi
                 await context.Response.WriteAsync("Oops - badness!");
                 return;
             }
+
+            someService.HeaderKey = keyHeader;
 
             await _next.Invoke(context);
         }
